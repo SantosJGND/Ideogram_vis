@@ -101,7 +101,7 @@ app.layout = html.Div([
     
     html.Div([
     html.H3(
-    id= "header1",className= "six columns",children= "This other thing"
+    id= "header1",className= "six columns",children= "Hi there"
     )],className= "row"),
     
     

@@ -101,8 +101,8 @@ app.layout = html.Div([
     
     html.Div([
     html.H3(
-    id= "header1",className= "six columns",children= "This thing"
-    )],className= "row")
+    id= "header1",className= "six columns",children= "This other thing"
+    )],className= "row"),
     
     
 #    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()))

@@ -54,7 +54,7 @@ def return_figure():
     for chrom,group in ideo.groupby('chrom'):
         if chrom not in chromosome_list:
             continue
-        for cramp in [x for x in range(300)]:
+        for cramp in [x for x in range(600)]:
             layout['shapes'].append(
             {
             'type': 'rect',

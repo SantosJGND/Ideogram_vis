@@ -76,12 +76,6 @@ def return_figure():
 #
 
 
-#pp = pprint.PrettyPrinter(indent=4)
-#pp.pprint(plotly_fig['layout'])
-
-
-
-#plt.savefig('Ideo_' + Subject + '.png',bbox_inches = 'tight')
 import flask
 import dash
 from dash.dependencies import Input, Output, State, Event

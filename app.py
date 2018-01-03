@@ -52,7 +52,7 @@ layout = {'width': 2000, 'height': 1000, 'autosize': False, 'hovermode': 'closes
 layout['shapes'] = []
 
 for chrom,group in ideo.groupby('chrom'):
-    for cramp in [x for x in range(500,800)]:
+    for cramp in [x for x in range(group.shape[0])]:
         layout['shapes'].append(
         {
         'type': 'rect',

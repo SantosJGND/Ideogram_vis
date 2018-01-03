@@ -15,7 +15,7 @@ import pandas as pd
 file_name='example_chr1.pkl'
 ideo = pd.read_pickle(file_name)
 
-chromosome_list= ideo.chrom.unique()
+chromosome_list= ideo.chrom.unique()[:10]
 # Height of each ideogram
 chrom_height = .5
 
@@ -52,6 +52,8 @@ layout = {'width': 2000, 'height': 1000, 'autosize': False, 'hovermode': 'closes
 layout['shapes'] = []
 
 for chrom,group in ideo.groupby('chrom'):
+    if chrom not in chromosome_list:
+        continue
     for cramp in [x for x in range(group.shape[0])]:
         layout['shapes'].append(
         {

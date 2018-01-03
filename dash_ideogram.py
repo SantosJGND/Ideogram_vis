@@ -8,46 +8,8 @@ Created on Wed Jan 03 10:48:31 2018
 import matplotlib
 matplotlib.use('Agg')
 
-from matplotlib import pyplot as plt
 from matplotlib.collections import BrokenBarHCollection
 import pandas as pd
-
-import pprint
-import numpy as np
-
-# Plotly
-import plotly.plotly as py
-import plotly.tools as tls
-
-def chromosome_collections(df, y_positions, height,  **kwargs):
-    """
-    Yields BrokenBarHCollection of features that can be added to an Axes
-    object.
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Must at least have columns ['chrom', 'start', 'end', 'color']. If no
-        column 'width', it will be calculated from start/end.
-    y_positions : dict
-        Keys are chromosomes, values are y-value at which to anchor the
-        BrokenBarHCollection
-    height : float
-        Height of each BrokenBarHCollection
-    Additional kwargs are passed to BrokenBarHCollection
-    """
-    del_width = False
-    if 'width' not in df.columns:
-        del_width = True
-        df['width'] = df['end'] - df['start']
-    for chrom, group in df.groupby('chrom'):
-        print(chrom)
-        yrange = (y_positions[chrom], height)
-        xranges = group[['start', 'width']].values
-        yield BrokenBarHCollection(
-            xranges, yrange, facecolors=group['colors'], **kwargs)
-    if del_width:
-        del df['width']
-
 
 ### read ideogram:
 file_name='example_chr1.pkl'
@@ -83,73 +45,15 @@ for chrom in chromosome_list[::-1]:
     gene_ybase[chrom] = ybase - gene_height - gene_padding
     ybase += chrom_height + chrom_spacing
 
-###
-# Colors for different chromosome stains
-color_lookup = {
-    'red': [255, 0, 0],
-    'yellow': [255, 255, 0],
-    'blue': [0, 0, 255],
-    'orange': [255, 165, 0],
-    'green': [50, 205, 50],
-    'black': [0, 0, 0],
-    'purple': [128, 0, 128],
-    'silver': [211, 211, 211],
-}
+
+layout = {'width': 2000, 'height': 1000, 'autosize': False, 'hovermode': 'closest', 'margin': {'l': 250, 'r': 199, 't': 120, 'b': 109, 'pad': 0}, 'xaxis1': {'anchor': 'y1', 'zeroline': False, 'ticks': 'inside', 'type': 'linear', 'range': [-2161775.8500000001, 45397292.850000001], 'showgrid': False, 'domain': [0.0, 1.0], 'side': 'bottom', 'tickfont': {'size': 10.0}, 'tick0': 0, 'dtick': 2000000, 'tickmode': False, 'mirror': 'ticks', 'showline': True}, 'yaxis1': {'anchor': 'x1', 'zeroline': False, 'ticks': 'inside', 'type': 'linear', 'range': [-1.0975000000000008, 23.047500000000014], 'showgrid': False, 'domain': [0.0, 1.0], 'side': 'left', 'tickfont': {'size': 10.0}, 'tick0': 21.700000000000014, 'dtick': -0.55000000000000071, 'tickmode': False, 'mirror': 'ticks', 'showline': True}, 'showlegend': False}
 
 
-ideo['colors'] = ideo['gieStain'].apply(lambda x: tuple([round(y / float(255),1) for y in color_lookup[x]]))
-# Add a new column for width
-ideo['width'] = ideo.end - ideo.start
-
-# Width, height (in inches)
-figsize = (20, 10)
-
-fig = plt.figure(figsize=figsize)
-ax = fig.add_subplot(111)
-
-# Now all we have to do is call our function for the ideogram data...
-print("adding ideograms...")
-for collection in chromosome_collections(ideo, chrom_ybase, chrom_height, edgecolors=None, linewidths= 0):
-    ax.add_collection(collection)
-
-
-# Axes tweaking
-ax.set_xticks([x for x in range(0,max(ideo.end),2000000)])
-plt.xticks(fontsize = 10,rotation = 90)
-ax.tick_params(axis = 'x',pad = 10)
-
-ax.tick_params(axis='y', which='major', pad=30)
-ax.set_yticks([chrom_centers[i] for i in chromosome_list])
-ax.set_yticklabels(chromosome_list, fontsize = 10)
-ax.axis('tight')
-
-from mpld3 import fig_to_dict
-
-test= fig_to_dict(fig)
-#print(test.keys())
-#print(test['axes'][0])
-#print(test['id'])
-#print (test)
-
-
-#from mplexporter.utils import color_to_hex
-#from mplexporter.exporter import Exporter
-#from mplexporter.renderers import Renderer
-#
-
-#renderer = PlotlyRenderer()
-#exporter = Exporter(renderer)
-#exporter.run(fig)
-#print(renderer.data)
-
-plotly_fig= tls.mpl_to_plotly(fig, strip_style=False, verbose=False)
-print(tls.mpl_to_plotly(fig))
-
-plotly_fig['layout']['shapes'] = []
+layout['shapes'] = []
 
 for chrom,group in ideo.groupby('chrom'):
     for cramp in [x for x in range(500,800)]:
-        plotly_fig['layout']['shapes'].append(
+        layout['shapes'].append(
         {
         'type': 'rect',
         'x0': group.iloc[cramp,:].start,
@@ -165,6 +69,10 @@ for chrom,group in ideo.groupby('chrom'):
 
 #
 
+fig = {
+    'data': [],
+    'layout': layout
+}
 #pp = pprint.PrettyPrinter(indent=4)
 #pp.pprint(plotly_fig['layout'])
 
@@ -175,12 +83,6 @@ import dash
 from dash.dependencies import Input, Output, State, Event
 import dash_core_components as dcc
 import dash_html_components as html
-import base64
-
-
-image_filename = 'Ideo_IRIS_313-11825.png' # replace with your own image
-encoded_image = base64.b64encode(open(image_filename, 'rb').read())
-
 
 import pandas as pd
 
@@ -196,7 +98,7 @@ app.layout = html.Div([
     
 #    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()))
     html.Div([
-    dcc.Graph(id= "ideogram",figure=plotly_fig)
+    dcc.Graph(id= "ideogram",figure=fig)
     ]),
     
     ])

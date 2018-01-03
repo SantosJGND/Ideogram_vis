@@ -48,33 +48,34 @@ for chrom in chromosome_list[::-1]:
 
 layout = {'width': 2000, 'height': 1000, 'autosize': False, 'hovermode': 'closest', 'margin': {'l': 250, 'r': 199, 't': 120, 'b': 109, 'pad': 0}, 'xaxis1': {'anchor': 'y1', 'zeroline': False, 'ticks': 'inside', 'type': 'linear', 'range': [-2161775.8500000001, 45397292.850000001], 'showgrid': False, 'domain': [0.0, 1.0], 'side': 'bottom', 'tickfont': {'size': 10.0}, 'tick0': 0, 'dtick': 2000000, 'tickmode': False, 'mirror': 'ticks', 'showline': True}, 'yaxis1': {'anchor': 'x1', 'zeroline': False, 'ticks': 'inside', 'type': 'linear', 'range': [-1.0975000000000008, 23.047500000000014], 'showgrid': False, 'domain': [0.0, 1.0], 'side': 'left', 'tickfont': {'size': 10.0}, 'tick0': 21.700000000000014, 'dtick': -0.55000000000000071, 'tickmode': False, 'mirror': 'ticks', 'showline': True}, 'showlegend': False}
 
+def return_figure():
+    layout['shapes'] = []
 
-layout['shapes'] = []
-
-for chrom,group in ideo.groupby('chrom'):
-    if chrom not in chromosome_list:
-        continue
-    for cramp in [x for x in range(300)]:
-        layout['shapes'].append(
-        {
-        'type': 'rect',
-        'x0': group.iloc[cramp,:].start,
-        'x1': group.iloc[cramp,:].end,
-        'y0': chrom_ybase[chrom],
-        'y1': chrom_ybase[chrom] + chrom_height,
-        'fillcolor': group.iloc[cramp,:].gieStain,
-        'line': {
-            'width': 0
-        }
-        }
-        )
-
-#
-
-example_figure = {
+    for chrom,group in ideo.groupby('chrom'):
+        if chrom not in chromosome_list:
+            continue
+        for cramp in [x for x in range(300)]:
+            layout['shapes'].append(
+            {
+            'type': 'rect',
+            'x0': group.iloc[cramp,:].start,
+            'x1': group.iloc[cramp,:].end,
+            'y0': chrom_ybase[chrom],
+            'y1': chrom_ybase[chrom] + chrom_height,
+            'fillcolor': group.iloc[cramp,:].gieStain,
+            'line': {
+                'width': 0
+            }
+            }
+            )
+    example_figure = {
     'data': [],
     'layout': layout
-}
+    }
+    return example_figure
+#
+
+
 #pp = pprint.PrettyPrinter(indent=4)
 #pp.pprint(plotly_fig['layout'])
 
@@ -98,9 +99,15 @@ app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/dZVMbK.css'
 
 app.layout = html.Div([
     
+    html.Div([
+    html.H3(
+    id= "header1",className= "six columns",children= "This thing"
+    )],className= "row")
+    
+    
 #    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()))
     html.Div([
-    dcc.Graph(id= "ideogram",figure=example_figure)
+    dcc.Graph(id= "ideogram",figure=return_figure())
     ]),
     
     ])

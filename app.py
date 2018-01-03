@@ -15,7 +15,7 @@ import pandas as pd
 file_name='example_chr1.pkl'
 ideo = pd.read_pickle(file_name)
 
-chromosome_list= ideo.chrom.unique()[:10]
+chromosome_list= ideo.chrom.unique()
 # Height of each ideogram
 chrom_height = .5
 
@@ -54,7 +54,7 @@ layout['shapes'] = []
 for chrom,group in ideo.groupby('chrom'):
     if chrom not in chromosome_list:
         continue
-    for cramp in [x for x in range(group.shape[0])]:
+    for cramp in [x for x in range(600)]:
         layout['shapes'].append(
         {
         'type': 'rect',
@@ -71,12 +71,13 @@ for chrom,group in ideo.groupby('chrom'):
 
 #
 
-fig = {
+example_figure = {
     'data': [],
     'layout': layout
 }
 #pp = pprint.PrettyPrinter(indent=4)
 #pp.pprint(plotly_fig['layout'])
+
 
 
 #plt.savefig('Ideo_' + Subject + '.png',bbox_inches = 'tight')
@@ -97,10 +98,9 @@ app.css.append_css({'external_url': 'https://codepen.io/chriddyp/pen/dZVMbK.css'
 
 app.layout = html.Div([
     
-    
 #    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()))
     html.Div([
-    dcc.Graph(id= "ideogram",figure=fig)
+    dcc.Graph(id= "ideogram",figure=example_figure)
     ]),
     
     ])

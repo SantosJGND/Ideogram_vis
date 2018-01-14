@@ -1,10 +1,10 @@
-## Genome relations browser - test.
+# Genome relations browser - test.
 
 Explore the origin of admixed varieties following genome wide classification.
 
 Visit the [app](https://ideogram.herokuapp.com/)
 
-# Context
+## Context
 
 This application represents a first attempt at a more comprehensive and intuitive way of exploring relations among
 individuals along their genomes.
@@ -28,4 +28,20 @@ By selecting the region and reference population to focus on, this application a
 intuitive and fast way to do just that.
 
 More information is provided on the application itself.
+
+## App features
+Range slider focuses analysis on specified region, updates ideogram to show only that region.
+
+Cluster observations (graph): Principal component analysis of clusters extracted. Colors derive from a simple kmeans clustering at K == 9.
+
+Likelihood density (graph): density plot of mean likelihood of each accessions for clusters of a given color.
+
+Accessions - loadings (graph): Loadings plot of the above PCA. Reveals overall relationships between accessions given the clusters selected for this analysis. color-code: Blue= Japonica; yellow= circumAus; red= Indica; purple= Admix; green= cBasmati.
+
+Selected accessions (table): Information on either all 948 CORE accessions included (select Full-colors in "Chose a color" dropdown), or those above a certain threshold when focusing on a particular cluster (select color "Chose a color", modulate threshold likelihood using slider).
+
+## Use
+**Online:**
+
+Visit the [Application](https://ideogram.herokuapp.com/) hosted on Heroku servers.
 

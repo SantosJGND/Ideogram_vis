@@ -17,10 +17,9 @@ import plotly.figure_factory as ff
 import sqlite3
 import base64
 import numpy as np
-#import pandas as pd
+
 import collections
-#import copy
-#
+
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
 
@@ -38,9 +37,7 @@ def db_profile_query(filename,Region):
         cur= con.cursor()
         
         query= 'SELECT Chr, window, cluster, profiles, blocks FROM Profiles WHERE window >= ? AND window < ?'
-#        print(query.format(Region))
         cur.execute(query,[str(x) for x in Region])
-#        cur.execute('SELECT * FROM Profiles;')
         data= cur.fetchall()
         for line in data:
             ret.append([line[0],line[1],[float(x) for x in line[3].split(';')],[int(x) for x in line[4].split(';')]])
@@ -67,14 +64,15 @@ def db_blocks_query(filename,Region):
         cur= con.cursor()
         
         query= 'SELECT Chr, window, profile FROM Blocks WHERE window >= ? AND window < ?'
-#        print(query.format(Region))
+        
         cur.execute(query,[str(x) for x in Region])
-#        cur.execute('SELECT * FROM Profiles;')
+        
         data= cur.fetchall()
         for line in data:
             ret[line[0]][line[1]] = [int(c) for c in line[2].split(';')]
         
         cur.execute('SELECT profile FROM Blocks WHERE window = -1')
+        
         data= cur.fetchone()
         Names= data[0].split(';')
         return ret, Names

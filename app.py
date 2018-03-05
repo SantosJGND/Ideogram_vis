@@ -242,29 +242,12 @@ def loadings_graph(df,orderCore,scheme,coords,pop_refs,color_here,opac):
     
     return figure
 ###
-### corss reference Blocks and Profiles and Analyse to prodduce dataframes
+### cross reference Blocks and Profiles and Analyse to produce dataframes
 
 def Clover(Profiles,focus_indexes,Trend,chromosomes,threshold,X_threshold,Focus,target,Region):
-#        print(len(Profiles[1]))
-#        print([x for x in Profiles[1].keys()][:10])
-#        print('hey')
-        #### Chose_profiles: automatically chose clusters with at least one included 
-        #### focus accession of 'target' color at a threshold >= target_threshold
-#        Chose_profiles = {CHR:{bl:[y for y in Profiles[CHR][bl].keys() if sum([int(Profiles[CHR][bl][y][z] >= X_threshold) \
-#        for z in [x for x in focus_indexes if Blocks[CHR][bl][x] in target]]) >= 1] \
-#        for bl in Profiles[CHR].keys() if bl >= min(Region)*1e6 and bl <= max(Region)*1e6 and\
-#        len([x for x in focus_indexes if Blocks[CHR][bl][x] in target]) / float(len(Focus)) >= threshold} \
-#        for CHR in Blocks.keys() if CHR in chromosomes}
         
         Clover= [cl[2] for cl in Profiles if len([x for x in range(len(cl[2])) if cl[2][x] >= X_threshold and x in focus_indexes and cl[3][x] in target]) > 1]
-#    #    Coordinates = [[[[CHR,bl] for x in Chose_profiles[CHR][bl]] for bl in sorted(Chose_profiles[CHR].keys())] for CHR in sorted(Chose_profiles.keys())]
-#    #    Coordinates = [z for z in it.chain(*[y for y in it.chain([x for x in it.chain(*Coordinates)])])]
-#    #    Coordinates= np.array(Coordinates)
-#        
-#        Clover= [[[Profiles[CHR][bl][x] for x in Chose_profiles[CHR][bl]] for bl in sorted(Chose_profiles[CHR].keys())] for CHR in sorted(Chose_profiles.keys())]
-#    #    del Blocks
-#    #    del Profiles
-#        Clover= [z for z in it.chain(*[y for y in it.chain(*Clover)])]
+
         Clover= np.array(Clover)
         Clover = np.nan_to_num(Clover)
         Test = Clover
@@ -278,7 +261,7 @@ def Clover(Profiles,focus_indexes,Trend,chromosomes,threshold,X_threshold,Focus,
         X_se = pca.components_.T*np.sqrt(pca.explained_variance_)
         
         ###############################################################################
-        ########################### PAINTING SHIT!! ###################################
+        ########################### PAINTING ###################################
         ###############################################################################
         
         ## 
@@ -342,25 +325,25 @@ Explore the origin of hybrid accessions.
 
 ### Guide
 Below you will find a description of targeted genetic variation at three specific
-regions of chromosome 1 of *Oryza Sativa*. 
+regions of chromosome 1. 
 \n
 Preceding this analysis, a whole genome crawl was performed to in order to assess the \n
 most likely origin, in population terms, of each region of each accession in the data set. 
 \n
-The first graph, if `View` is set to `ALL`, is the output of that crawl along Chr 1 for 40 cBasmati accessions.
+The first graph, if `View` is set to `ALL`, is the output of that crawl along Chr 1 for 40 accessions.
 \n
 the colors represent classifications into reference populations, allowing for 2 and 3-way uncertainty:
 
    
 ```
 group_colors= { \n
-    "blue": "Japonica" \n
-    "yellow": "circumAus" \n
-    "red": "Indica" \n
-    "purple": "Indica-Japonica" \n
-    "orange": "Indica-cAus" \n
-    "green": "cAus-Japonica" \n
-    "silver": "cAus-Indica-Japonica" \n
+    "blue": "Pop1" \n
+    "yellow": "Pop2" \n
+    "red": "Pop3" \n
+    "purple": "Pop1-Pop3" \n
+    "orange": "Pop1-Pop2" \n
+    "green": "Pop2-Pop3" \n
+    "silver": "Pop2-Pop1-Pop3" \n
     "black": "outlier" \n
 }
 ```
@@ -421,9 +404,9 @@ app.layout = html.Div([
     value= 1,
     labelStyle={'display': 'inline-block'},
     options = [{'label':'All','value': 0},
-               {'label':'Indica','value': 1},
-                {'label':'Aus','value': 2},
-                {'label':'Japonica','value': 3}]
+               {'label':'Pop1','value': 1},
+                {'label':'Pop2','value': 2},
+                {'label':'Pop3','value': 3}]
     ),
     html.Button('THINK', id='button', n_clicks=0),
     html.Button('SHOW', id='button2', n_clicks=0)],className= 'row'),
@@ -556,6 +539,7 @@ def get_Clover(which,Region,button):
     if which != 0 and button >0:
         target= [which]
         Focus = ['CX59', 'CX65', 'CX67', 'CX104', 'CX143', 'CX149', 'IRIS_313-8268', 'IRIS_313-8326', 'IRIS_313-8385', 'IRIS_313-8656', 'IRIS_313-8712', 'IRIS_313-8747', 'IRIS_313-8813', 'IRIS_313-9083', 'IRIS_313-9172', 'IRIS_313-9601', 'IRIS_313-9629', 'IRIS_313-10670', 'IRIS_313-10851', 'IRIS_313-10868', 'IRIS_313-10926', 'IRIS_313-10933', 'IRIS_313-11021', 'IRIS_313-11022', 'IRIS_313-11023', 'IRIS_313-11026', 'IRIS_313-11218', 'IRIS_313-11258', 'IRIS_313-11268', 'IRIS_313-11289', 'IRIS_313-11293', 'IRIS_313-11451', 'IRIS_313-11564', 'IRIS_313-11567', 'IRIS_313-11625', 'IRIS_313-11627', 'IRIS_313-11630', 'IRIS_313-11632', 'IRIS_313-11743', 'IRIS_313-11825']
+        Focus= ['x'+str(x).zfill(3) for x in range(len(Focus))]
         chromosomes= [1]
         cons_threshold= .8
         
@@ -658,7 +642,7 @@ def update_loadings(Load,button,threshold,opac,selected_column):
         if selected_column == 0:
             scheme = Trend
             coords = {y:[x for x in range(len(scheme)) if scheme[x] == y] for y in list(set(scheme))}
-            pop_refs= ["Indica","cAus","Japonica","GAP","cBasmati","Admix"]
+            pop_refs= ['Pop1','Pop2','Pop3','GAP','Admix1','Admix2']
             color_here= color_ref
         else:
             scheme = [int(vectors.iloc[x,selected_column-1]>=threshold) for x in range(len(df))]
